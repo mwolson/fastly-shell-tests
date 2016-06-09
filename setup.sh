@@ -1,7 +1,6 @@
 #!/bin/bash
 
-target_url="https://ismdsqa-tmol-co.global.ssl.fastly.net/api/ismds"
-curl_args="--resolve ismdsqa-tmol-co.global.ssl.fastly.net:443:199.27.79.249"
+target_url="https://services-fastly.ticketmaster.net/api/ismds"
 curl_token=
 kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
 
