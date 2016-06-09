@@ -2,6 +2,7 @@
 
 target_url="https://ismdsqa-tmol-co.global.ssl.fastly.net/api/ismds"
 curl_args="--resolve ismdsqa-tmol-co.global.ssl.fastly.net:443:199.27.79.249"
+curl_token=
 kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
 
 full=
@@ -16,6 +17,7 @@ _reset_assertion_state
 
 function describe() {
     echo "* $@"
+    curl_token="TMPS-IdentityToken: test-$(basename $0)-$RANDOM"
 }
 
 function it() {
@@ -37,7 +39,7 @@ function fail() {
 
 function record_curl() {
     _reset_assertion_state
-    full=$(curl -s -i $curl_args "$@")
+    full=$(curl -s -i $curl_args -H "$curl_token" "$@")
     local status=$?
     if test $status -ne 0; then
         addl_text=$(curl -vv -i $curl_args "$@" 2>&1)
