@@ -47,14 +47,13 @@ record_offers
 expect_header X-Cache; to_equal MISS
 expect_unmodified_response
 
-sleep 5
+it "cache hits on the second facets request"
 
-it "5 seconds later, hits on the second facets request"
-
+wait_on_fastly_cache
 record_facets
 
 expect_header X-Cache; to_equal HIT
-expect_header Age; to_be_between 4 7
+expect_header Age; to_be_between 1 10
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
 
@@ -63,7 +62,7 @@ it "hits on the second quickpicks request"
 record_quickpicks
 
 expect_header X-Cache; to_equal HIT
-expect_header Age; to_be_between 4 9
+expect_header Age; to_be_between 1 10
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
 

@@ -1,7 +1,9 @@
 #!/bin/bash
 
+fastly_cache_period=3
 target_url="https://services-fastly.ticketmaster.net/api/ismds"
 curl_token=
+_inspect_next_curl=
 kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
 
 full=
@@ -42,14 +44,23 @@ function fail() {
     exit 1
 }
 
+function wait_on_fastly_cache() {
+    sleep $fastly_cache_period
+}
+
 function record_curl() {
     _reset_assertion_state
     full=$(curl -s -i $curl_args -H "$curl_token" "$@")
     local status=$?
-    if test $status -ne 0; then
-        addl_text=$(curl -vv -i $curl_args "$@" 2>&1)
+    if test $status -ne 0 || test -n "$_inspect_next_curl"; then
+        _inspect_next_curl=
+        addl_text=$(curl -# -vv -i $curl_args "$@" 2>&1)
         fail "curl command failed with status code $status"
     fi
+}
+
+function inspect_next_curl() {
+    _inspect_next_curl=true
 }
 
 function response() {
