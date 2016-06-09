@@ -26,8 +26,22 @@ function keep_headers() {
     kept_headers=$1
 }
 
+function fail() {
+    echo "$@"
+    if test -n "$addl_text"; then
+        echo -e "\n$addl_text"
+    fi
+    echo
+    exit 1
+}
+
 function record_curl() {
     full=$(curl -s -i $curl_args "$@")
+    local status=$?
+    if test $status -ne 0; then
+        addl_text=$(curl -vv -i $curl_args "$@" 2>&1)
+        fail "curl command failed with status code $status"
+    fi
 }
 
 function response() {
@@ -52,15 +66,6 @@ function expect_header() {
     side_a=$(get_header "$header_name")
     side_a_text="header ${header_name} with value \"${side_a}\""
     addl_text="Response headers:\n$(<<< "$full" grep -E "^(${kept_headers}):")"
-}
-
-function fail() {
-    echo "$@"
-    if test -n "$addl_text"; then
-        echo -e "\n$addl_text"
-    fi
-    echo
-    exit 1
 }
 
 function to_equal() {
