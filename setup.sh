@@ -7,6 +7,12 @@ kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
 
 full=
 
+if test "$(echo n | sed -r 's/(y|n)/y/' 2>/dev/null)" = "y"; then
+    sed="sed -r"
+else
+    sed="sed -E"
+fi
+
 function _reset_assertion_state() {
     addl_text=
     side_a=
@@ -56,7 +62,7 @@ function first_line() {
 }
 
 function get_header() {
-    <<< "$full" grep "^$1: " | sed -r "s/^$1: //" | first_line
+    <<< "$full" grep "^$1: " | $sed "s/^$1: //" | first_line
 }
 
 function expect() {
@@ -66,8 +72,8 @@ function expect() {
 
 function expect_origin_response_time() {
     local timer_value=$(get_header X-Timer)
-    local start=$(<<< "$timer_value" sed -r "s/.*,VS([0-9]+)(,|$).*/\1/")
-    local end=$(<<< "$timer_value" sed -r "s/.*,VE([0-9]+)(,|$).*/\1/")
+    local start=$(<<< "$timer_value" $sed "s/.*,VS([0-9]+)(,|$).*/\1/")
+    local end=$(<<< "$timer_value" $sed "s/.*,VE([0-9]+)(,|$).*/\1/")
     side_a=$(expr "$end" - "$start")
     side_a_text="response time of origin server (${side_a}ms)"
 }
