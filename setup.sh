@@ -29,13 +29,14 @@ function keep_headers() {
 function fail() {
     echo "$@"
     if test -n "$addl_text"; then
-        echo -e "\n$addl_text"
+        echo -e "\n${addl_text}"
     fi
     echo
     exit 1
 }
 
 function record_curl() {
+    _reset_assertion_state
     full=$(curl -s -i $curl_args "$@")
     local status=$?
     if test $status -ne 0; then
@@ -61,6 +62,14 @@ function expect() {
     side_a_text="\"$side_a\""
 }
 
+function expect_origin_response_time() {
+    local timer_value=$(get_header X-Timer)
+    local start=$(<<< "$timer_value" sed -r "s/.*,VS([0-9]+)(,|$).*/\1/")
+    local end=$(<<< "$timer_value" sed -r "s/.*,VE([0-9]+)(,|$).*/\1/")
+    side_a=$(expr "$end" - "$start")
+    side_a_text="response time of origin server (${side_a}ms)"
+}
+
 function expect_header() {
     local header_name=$1
     side_a=$(get_header "$header_name")
@@ -73,19 +82,22 @@ function to_equal() {
     if test "$side_a" != "$side_b"; then
         fail "Expected $side_a_text to equal \"${side_b}\" but it did not"
     fi
-    _reset_assertion_state
+}
+
+function to_be_greater_than() {
+    if test "$side_a" -le "$1"; then
+        fail "Expected $side_a_text to be greater than $1 but it was not"
+    fi
 }
 
 function to_be_between() {
     if test "$side_a" -lt "$1" || test "$side_a" -gt "$2"; then
         fail "Expected $side_a_text to be within $1 and $2 but it was not"
     fi
-    _reset_assertion_state
 }
 
 function to_contain() {
     if [[ "$side_a" != *"$1"* ]]; then
         fail "Expected $side_a_text to contain \"$1\" but it did not"
     fi
-    _reset_assertion_state
 }
