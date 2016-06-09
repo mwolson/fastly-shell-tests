@@ -72,7 +72,7 @@ function first_line() {
 }
 
 function get_header() {
-    <<< "$full" grep "^$1: " | $sed "s/^$1: //" | first_line
+    <<< "$full" grep -i "^$1: " | $sed "s/^$1: //i" | first_line
 }
 
 function expect() {
@@ -82,8 +82,8 @@ function expect() {
 
 function expect_origin_response_time() {
     local timer_value=$(get_header X-Timer)
-    local start=$(<<< "$timer_value" $sed "s/.*,VS([0-9]+)(,|$).*/\1/")
-    local end=$(<<< "$timer_value" $sed "s/.*,VE([0-9]+)(,|$).*/\1/")
+    local start=$(<<< "$timer_value" $sed "s/.*,VS([0-9]+)(,|$).*/\1/i")
+    local end=$(<<< "$timer_value" $sed "s/.*,VE([0-9]+)(,|$).*/\1/i")
     side_a=$(expr "$end" - "$start")
     side_a_text="response time of origin server (${side_a}ms)"
 }
@@ -92,7 +92,7 @@ function expect_header() {
     local header_name=$1
     side_a=$(get_header "$header_name")
     side_a_text="header ${header_name} with value \"${side_a}\""
-    addl_text="Response headers:\n$(<<< "$full" grep -E "^(${kept_headers}):")"
+    addl_text="Response headers:\n$(<<< "$full" grep -i -E "^(${kept_headers}):")"
 }
 
 function to_equal() {
