@@ -90,6 +90,12 @@ function to_be_greater_than() {
     fi
 }
 
+function to_be_less_than() {
+    if test "$side_a" -ge "$1"; then
+        fail "Expected $side_a_text to be less than $1 but it was not"
+    fi
+}
+
 function to_be_between() {
     if test "$side_a" -lt "$1" || test "$side_a" -gt "$2"; then
         fail "Expected $side_a_text to be within $1 and $2 but it was not"

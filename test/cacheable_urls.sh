@@ -56,6 +56,7 @@ record_facets
 expect_header X-Cache; to_equal HIT
 expect_header Age; to_be_between 4 7
 expect_modified_response
+expect_origin_response_time; to_equal 0
 
 it "hits on the second quickpicks request"
 
@@ -64,6 +65,7 @@ record_quickpicks
 expect_header X-Cache; to_equal HIT
 expect_header Age; to_be_between 4 9
 expect_modified_response
+expect_origin_response_time; to_equal 0
 
 it "misses on the second offers request"
 
