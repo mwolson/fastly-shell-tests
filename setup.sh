@@ -11,7 +11,7 @@ full=
 if test "$(echo n | sed -r 's/(y|n)/y/' 2>/dev/null)" = "y"; then
     sed="sed -r"
 else
-    sed="sed -E"
+    sed="perl -pe"
 fi
 
 function _reset_assertion_state() {
