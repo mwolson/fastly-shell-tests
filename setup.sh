@@ -1,6 +1,7 @@
 #!/bin/bash
 
 fastly_cache_period=3
+origin_url="https://services-intqa.ticketmaster.net/api/ismds"
 target_url="https://services-fastly.ticketmaster.net/api/ismds"
 curl_token=
 _inspect_next_curl=

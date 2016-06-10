@@ -33,13 +33,13 @@ it "misses on a wrong api secret"
 
 record_with_wrong_api_secret
 
-expect_header X-Cache; to_match MISS$
 expect_header Server; to_equal nginx
+expect_header X-Cache; to_match MISS$
 
 it "does not cache the request containing wrong api secret"
 
 wait_on_fastly_cache
 record_with_wrong_api_secret
 
-expect_header X-Cache; to_match MISS$
 expect_header Server; to_equal nginx
+expect_header X-Cache; to_match MISS$
