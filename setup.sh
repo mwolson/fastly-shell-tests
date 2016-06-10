@@ -48,13 +48,26 @@ function wait_on_fastly_cache() {
     sleep $fastly_cache_period
 }
 
+function echo_quoted() {
+    local needs_quote="[[:space:]&|\"]"
+    for i in "$@"; do
+        if [[ $i =~ $needs_quote ]]; then
+            i=\'$i\'
+        fi
+        echo -n " $i"
+    done
+}
+
 function record_curl() {
     _reset_assertion_state
     full=$(curl -s -i $curl_args -H "$curl_token" "$@")
     local status=$?
-    if test $status -ne 0 || test -n "$_inspect_next_curl"; then
+    if test -n "$_inspect_next_curl"; then
         _inspect_next_curl=
-        addl_text=$(curl -# -vv -i $curl_args "$@" 2>&1)
+        addl_text=$(curl -# -vv $curl_args "$@" 2> >(grep -E '^[*<>]'))
+        fail "Inspecting curl command invoked like:$(echo_quoted curl -# -vv $curl_args "$@")"
+    elif test $status -ne 0; then
+        addl_text=$(curl -# -vv $curl_args "$@" 2>&1)
         fail "curl command failed with status code $status"
     fi
 }
@@ -99,6 +112,12 @@ function to_equal() {
     local side_b=$1
     if test "$side_a" != "$side_b"; then
         fail "Expected $side_a_text to equal \"${side_b}\" but it did not"
+    fi
+}
+
+function to_be_empty() {
+    if test -n "$side_a"; then
+        fail "Expected $side_a_text to be empty but it was not"
     fi
 }
 
