@@ -21,6 +21,7 @@ record_ismds
 
 expect_header Server; to_equal nginx
 expect_header Age; to_equal 0
+first_expires=$(get_header Expires)
 
 it "after 3 seconds, misses on initial fastly request to same path"
 
@@ -29,6 +30,7 @@ record_fastly
 
 expect_header X-Cache; to_match MISS$
 expect_header Age; to_be_between 3 4
+expect_header Expires; to_equal "$first_expires"
 
 it "after another 3 seconds, cache hits on a followup request with correct Age header"
 
@@ -37,3 +39,4 @@ record_fastly
 
 expect_header X-Cache; to_match HIT$
 expect_header Age; to_be_between 6 8
+expect_header Expires; to_equal "$first_expires"
