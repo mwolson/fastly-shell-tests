@@ -22,14 +22,14 @@ it "misses on the first request with apikey/apisecret query params"
 
 record_with_query_params
 
-expect_header X-Cache; to_equal MISS
+expect_header X-Cache; to_match MISS$
 
 it "cache hits on the second request"
 
 wait_on_fastly_cache
 record_with_query_params
 
-expect_header X-Cache; to_equal HIT
+expect_header X-Cache; to_match HIT$
 expect_header Age; to_be_between 1 10
 expect_origin_response_time; to_be_less_than 25
 
@@ -37,7 +37,7 @@ it "hits on an X-Proxy-Authorization request"
 
 record_with_x_proxy_auth
 
-expect_header X-Cache; to_equal HIT
+expect_header X-Cache; to_match HIT$
 expect_header Age; to_be_between 1 10
 expect_origin_response_time; to_be_less_than 25
 
@@ -45,6 +45,6 @@ it "hits on a Proxy-Authorization request"
 
 record_with_proxy_auth
 
-expect_header X-Cache; to_equal HIT
+expect_header X-Cache; to_match HIT$
 expect_header Age; to_be_between 1 10
 expect_origin_response_time; to_be_less_than 25

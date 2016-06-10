@@ -4,7 +4,7 @@
 
 describe "Only /facets and /quickpicks should be cached by fastly"
 
-keep_headers "Age|X-Cache|Access-Control-Allow-Origin|X-Served-By|X-Timer"
+keep_headers "Age|X-Cache|X-Served-By|X-Timer|Access-Control-Allow-Origin"
 
 function record_facets() {
     record_curl "${target_url}/host/26004E4DF73E808C/facets?by=inventorytypes%20offertypes%20accessibility&q=available&apikey=b462oi7fic6pehcdkzony5bxhe&apisecret=pquzpfrfz7zd2ylvtz3w5dtyse" -H 'Pragma: no-cache' -H 'Origin: http://fastly-hackathon.tmdev.co' -H 'Accept-Encoding: gzip, deflate, sdch, br' -H 'Accept-Language: en-US,en;q=0.8' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36' -H 'Accept: */*' -H 'Referer: http://fastly-hackathon.tmdev.co/event/26004E4DF73E808C?fg=ism' -H 'Connection: keep-alive' -H 'Cache-Control: no-cache' --compressed
@@ -32,19 +32,19 @@ it "misses on the first facets, quickpicks, and offers requests"
 
 record_facets
 
-expect_header X-Cache; to_equal MISS
+expect_header X-Cache; to_match MISS$
 expect_header Age; to_equal 0
 expect_modified_response
 
 record_quickpicks
 
-expect_header X-Cache; to_equal MISS
+expect_header X-Cache; to_match MISS$
 expect_header Age; to_equal 0
 expect_modified_response
 
 record_offers
 
-expect_header X-Cache; to_equal MISS
+expect_header X-Cache; to_match MISS$
 expect_unmodified_response
 
 it "cache hits on the second facets request"
@@ -52,7 +52,7 @@ it "cache hits on the second facets request"
 wait_on_fastly_cache
 record_facets
 
-expect_header X-Cache; to_equal HIT
+expect_header X-Cache; to_match HIT$
 expect_header Age; to_be_between 1 10
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
@@ -61,7 +61,7 @@ it "hits on the second quickpicks request"
 
 record_quickpicks
 
-expect_header X-Cache; to_equal HIT
+expect_header X-Cache; to_match HIT$
 expect_header Age; to_be_between 1 10
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
@@ -70,5 +70,5 @@ it "misses on the second offers request"
 
 record_offers
 
-expect_header X-Cache; to_equal MISS
+expect_header X-Cache; to_match MISS$
 expect_unmodified_response

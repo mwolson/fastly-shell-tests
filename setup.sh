@@ -8,6 +8,7 @@ kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
 
 full=
 
+grep="grep -E"
 if test "$(echo n | sed -r 's/(y|n)/y/' 2>/dev/null)" = "y"; then
     sed="sed -r"
 else
@@ -64,7 +65,7 @@ function record_curl() {
     local status=$?
     if test -n "$_inspect_next_curl"; then
         _inspect_next_curl=
-        addl_text=$(curl -# -vv $curl_args "$@" 2> >(grep -E '^[*<>]'))
+        addl_text=$(curl -# -vv $curl_args "$@" 2> >($grep '^[*<>]'))
         fail "Inspecting curl command invoked like:$(echo_quoted curl -# -vv $curl_args "$@")"
     elif test $status -ne 0; then
         addl_text=$(curl -# -vv $curl_args "$@" 2>&1)
@@ -85,7 +86,7 @@ function first_line() {
 }
 
 function get_header() {
-    <<< "$full" grep -i "^$1: " | $sed "s/^$1: //i" | first_line
+    <<< "$full" $grep -i "^$1: " | $sed "s/^$1: //i" | first_line
 }
 
 function expect() {
@@ -105,7 +106,7 @@ function expect_header() {
     local header_name=$1
     side_a=$(get_header "$header_name")
     side_a_text="header ${header_name} with value \"${side_a}\""
-    addl_text="Response headers:\n$(<<< "$full" grep -i -E "^(${kept_headers}):")"
+    addl_text="Response headers:\n$(<<< "$full" $grep -i "^(${kept_headers}):")"
 }
 
 function to_equal() {
@@ -142,5 +143,11 @@ function to_be_between() {
 function to_contain() {
     if [[ "$side_a" != *"$1"* ]]; then
         fail "Expected $side_a_text to contain \"$1\" but it did not"
+    fi
+}
+
+function to_match() {
+    if ! <<< "$side_a" $grep -i "$1" > /dev/null; then
+        fail "Expected $side_a_text to match \"$1\" but it did not"
     fi
 }
