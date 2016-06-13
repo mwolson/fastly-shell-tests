@@ -16,17 +16,17 @@ function record_with_wrong_api_secret() {
 
 it "misses on the first request with apikey/apisecret query params"
 
-record_with_query_params
+until_fresh_curl_object 3 record_with_query_params
 
 expect_header X-Cache; to_match MISS$
+miss_age=$(get_header Age)
 
 it "cache hits on the second request"
 
-wait_on_fastly_cache
 record_with_query_params
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between 1 10
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 1))
 expect_origin_response_time; to_be_less_than 25
 
 it "misses on a wrong api secret"
@@ -34,12 +34,13 @@ it "misses on a wrong api secret"
 record_with_wrong_api_secret
 
 expect_header Server; to_equal nginx
+expect_header Age; to_be_empty
 expect_header X-Cache; to_match MISS$
 
 it "does not cache the request containing wrong api secret"
 
-wait_on_fastly_cache
 record_with_wrong_api_secret
 
 expect_header Server; to_equal nginx
+expect_header Age; to_be_empty
 expect_header X-Cache; to_match MISS$

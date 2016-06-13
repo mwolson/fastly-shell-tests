@@ -1,6 +1,6 @@
 #!/bin/bash
 
-fastly_cache_period=3
+curl_max_age=60
 origin_url="https://services-intqa.ticketmaster.net/api/ismds"
 target_url="https://services-fastly.ticketmaster.net/api/ismds"
 curl_token=
@@ -50,10 +50,6 @@ function fail() {
     exit 1
 }
 
-function wait_on_fastly_cache() {
-    sleep $fastly_cache_period
-}
-
 function echo_quoted() {
     local needs_quote="[[:space:]&|\"]"
     for i in "$@"; do
@@ -76,6 +72,17 @@ function record_curl() {
         addl_text=$(curl -# -vv $curl_args "$@" 2>&1)
         fail "curl command failed with status code $status"
     fi
+}
+
+function until_fresh_curl_object() {
+    local test_duration=$1
+    local want_age_lt=$((curl_max_age - test_duration))
+    shift
+    "$@"
+    until test -z "$(get_header Age)" || test $(get_header Age) -lt $want_age_lt; do
+        sleep 1
+        "$@"
+    done
 }
 
 function stash_curl() {

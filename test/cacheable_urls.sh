@@ -28,43 +28,46 @@ function expect_unmodified_response() {
     expect_origin_response_time; to_be_greater_than 5
 }
 
-it "misses on the first facets, quickpicks, and offers requests"
+it "misses on the first facets request"
 
-record_facets
+until_fresh_curl_object 3 record_facets
 
 expect_header X-Cache; to_match MISS$
-expect_header Age; to_equal 0
 expect_modified_response
-
-record_quickpicks
-
-expect_header X-Cache; to_match MISS$
-expect_header Age; to_equal 0
-expect_modified_response
-
-record_offers
-
-expect_header X-Cache; to_match MISS$
-expect_unmodified_response
+miss_age=$(get_header Age)
 
 it "cache hits on the second facets request"
 
-wait_on_fastly_cache
 record_facets
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between 1 10
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 1))
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
 
-it "hits on the second quickpicks request"
+it "misses on the first quickpicks request"
+
+until_fresh_curl_object 3 record_quickpicks
+
+expect_header X-Cache; to_match MISS$
+expect_modified_response
+miss_age=$(get_header Age)
+
+it "cache hits on the second quickpicks request"
 
 record_quickpicks
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between 1 10
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 1))
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
+
+it "misses on the first offers request"
+
+until_fresh_curl_object 3 record_offers
+
+expect_header X-Cache; to_match MISS$
+expect_unmodified_response
 
 it "misses on the second offers request"
 
