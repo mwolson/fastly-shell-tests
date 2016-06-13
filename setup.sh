@@ -1,13 +1,26 @@
 #!/bin/bash
 
 curl_max_age=60
-origin_url="https://services-intqa.ticketmaster.net/api/ismds"
-target_url="https://services-fastly.ticketmaster.net/api/ismds"
 curl_token=
 _inspect_next_curl=
 kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
-
 full=
+
+# QA settings
+origin_url="https://services-intqa.ticketmaster.net/api/ismds"
+target_url="https://services-fastly.ticketmaster.net/api/ismds"
+target_event_id=26004E4DF73E808C
+target_apikey=b462oi7fic6pehcdkzony5bxhe
+target_apisecret=pquzpfrfz7zd2ylvtz3w5dtyse
+target_proxy_auth_token="YjQ2Mm9pN2ZpYzZwZWhjZGt6b255NWJ4aGU6cHF1enBmcmZ6N3pkMnlsdnR6M3c1ZHR5c2U="
+
+# Production settings
+# origin_url="https://services.ticketmaster.com/api/ismds"
+# target_url="https://services-fastly.ticketmaster.com/api/ismds"
+# target_event_id=01004F90D7D94571
+# target_apikey=b462oi7fic6pehcdkzony5bxhe
+# target_apisecret=pquzpfrfz7zd2ylvtz3w5dtyse
+# target_proxy_auth_token="YjQ2Mm9pN2ZpYzZwZWhjZGt6b255NWJ4aGU6cHF1enBmcmZ6N3pkMnlsdnR6M3c1ZHR5c2U="
 
 grep="grep -E"
 if test "$(echo n | sed -r 's/(Y|N)/y/i' 2>/dev/null)" = "y"; then
