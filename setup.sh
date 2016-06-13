@@ -10,7 +10,7 @@ kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
 full=
 
 grep="grep -E"
-if test "$(echo n | sed -r 's/(y|n)/y/' 2>/dev/null)" = "y"; then
+if test "$(echo n | sed -r 's/(Y|N)/y/i' 2>/dev/null)" = "y"; then
     sed="sed -r"
 else
     sed="perl -pe"
