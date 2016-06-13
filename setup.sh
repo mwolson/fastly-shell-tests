@@ -37,12 +37,16 @@ function keep_headers() {
     kept_headers=$1
 }
 
-function fail() {
+function soft_fail() {
     echo "$@"
     if test -n "$addl_text"; then
         echo -e "\n${addl_text}"
     fi
     echo
+}
+
+function fail() {
+    soft_fail "$@"
     exit 1
 }
 
@@ -67,11 +71,19 @@ function record_curl() {
     if test -n "$_inspect_next_curl"; then
         _inspect_next_curl=
         addl_text=$(curl -# -vv $curl_args "$@" 2> >($grep '^[*<>]'))
-        fail "Inspecting curl command invoked like:$(echo_quoted curl -# -vv $curl_args "$@")"
+        soft_fail "Inspecting curl command invoked like:$(echo_quoted curl -# -vv $curl_args "$@")"
     elif test $status -ne 0; then
         addl_text=$(curl -# -vv $curl_args "$@" 2>&1)
         fail "curl command failed with status code $status"
     fi
+}
+
+function stash_curl() {
+    _curl_stash=$full
+}
+
+function pop_curl() {
+    full=$_curl_stash
 }
 
 function inspect_next_curl() {
