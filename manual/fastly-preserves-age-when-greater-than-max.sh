@@ -15,7 +15,7 @@ function record_fastly() {
     record_curl "${target_url}/host/26004E4DF73E808C/facets?by=shape+attributes+available+accessibility+offer+inventoryType+offerType+description&show=places&embed=description&unlock=&apikey=b462oi7fic6pehcdkzony5bxhe&apisecret=pquzpfrfz7zd2ylvtz3w5dtyse" -H 'Pragma: no-cache' -H 'Origin: http://fastly-hackathon.tmdev.co' -H 'Accept-Encoding: gzip, deflate, sdch, br' -H 'Accept-Language: en-US,en;q=0.8' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36' -H 'Accept: */*' -H 'Cache-Control: no-cache' -H 'Referer: http://fastly-hackathon.tmdev.co/event/3F004EAECFB7BA10?fg=ism' -H 'Connection: keep-alive' --compressed
 }
 
-it "captures Age of a stale ISMDS request (if Age is 1, repeat the test case manually 60 seconds later)"
+it "captures Age of a stale ISMDS request (if Age is less than 60, repeat the test case later)"
 
 record_fastly
 stash_curl
