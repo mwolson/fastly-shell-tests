@@ -114,6 +114,10 @@ function response() {
     echo "$full"
 }
 
+function response_body() {
+    <<< "$full" awk '/^$/{body=1;next}body'
+}
+
 function first_line() {
     head -n 1 | tr -d '\r\n'
 }
