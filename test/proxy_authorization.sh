@@ -30,7 +30,7 @@ it "cache hits on the second request"
 record_with_query_params
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between $((miss_age)) $((miss_age + 1))
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 2))
 expect_origin_response_time; to_be_less_than 25
 
 it "hits on an X-Proxy-Authorization request"
@@ -38,7 +38,7 @@ it "hits on an X-Proxy-Authorization request"
 record_with_x_proxy_auth
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between $((miss_age)) $((miss_age + 2))
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 3))
 expect_origin_response_time; to_be_less_than 25
 
 it "hits on a Proxy-Authorization request"
@@ -46,5 +46,5 @@ it "hits on a Proxy-Authorization request"
 record_with_proxy_auth
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between $((miss_age)) $((miss_age + 3))
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 4))
 expect_origin_response_time; to_be_less_than 25

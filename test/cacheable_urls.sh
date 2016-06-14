@@ -41,7 +41,7 @@ it "cache hits on the second facets request"
 record_facets
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between $((miss_age)) $((miss_age + 1))
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 2))
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
 
@@ -58,7 +58,7 @@ it "cache hits on the second quickpicks request"
 record_quickpicks
 
 expect_header X-Cache; to_match HIT$
-expect_header Age; to_be_between $((miss_age)) $((miss_age + 1))
+expect_header Age; to_be_between $((miss_age)) $((miss_age + 2))
 expect_modified_response
 expect_origin_response_time; to_be_less_than 5
 
