@@ -22,7 +22,7 @@ stash_curl
 record_ismds
 
 expect_header Server; to_equal nginx
-expect_header Age; to_be_less_than 3
+expect_header Age; to_be_less_than 5
 expect_header Cache-Control; to_match max-age=5$
 ismds_age=$(get_header Age)
 
@@ -31,7 +31,8 @@ it "compared to fastly request made just before, should preserve the Age header 
 pop_curl
 
 expect_header X-Cache; to_match MISS$
-expect_header Age; to_be_between $((ismds_age - 1)) $((ismds_age + 1))
+expect_header Age; to_be_between 0 $((ismds_age + 1))
+expect_header Cache-Control; to_match max-age=5$
 
 it "after 6 seconds, cache misses on a followup request but has the new Age header from ismds"
 
