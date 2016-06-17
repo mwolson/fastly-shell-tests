@@ -1,6 +1,5 @@
 #!/bin/bash
 
-curl_max_age=60
 curl_token=
 _inspect_next_curl=
 kept_headers="Age|X-Cache|Access-Control-Allow-Origin|X-Served-By"
@@ -89,13 +88,20 @@ function record_curl() {
 
 function until_fresh_curl_object() {
     local test_duration=$1
-    local want_age_lt=$((curl_max_age - test_duration))
+    local age=
+    local max_age=
     shift
     "$@"
-    until test -z "$(get_header Age)" || test $(get_header Age) -lt $want_age_lt; do
+    age=$(get_header Age); max_age=$(get_cache_max_age)
+    until test -z "$age" || test -z "$max_age" || test $test_duration -lt $((max_age - age)); do
         sleep 1
         "$@"
+        age=$(get_header Age); max_age=$(get_cache_max_age)
     done
+}
+
+function get_cache_max_age() {
+    <<< "$(get_header Cache-Control)" $sed 's/.*max-age=([0-9]+)$/\1/i'
 }
 
 function stash_curl() {
@@ -133,8 +139,8 @@ function expect() {
 
 function expect_origin_response_time() {
     local timer_value=$(get_header X-Timer)
-    local start=$(<<< "$timer_value" $sed "s/.*,VS([0-9]+)(,|$).*/\1/i")
-    local end=$(<<< "$timer_value" $sed "s/.*,VE([0-9]+)(,|$).*/\1/i")
+    local start=$(<<< "$timer_value" $sed 's/.*,VS([0-9]+)(,|$).*/\1/i')
+    local end=$(<<< "$timer_value" $sed 's/.*,VE([0-9]+)(,|$).*/\1/i')
     side_a=$(expr "$end" - "$start")
     side_a_text="response time of origin server (${side_a}ms)"
 }
