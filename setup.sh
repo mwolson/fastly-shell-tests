@@ -93,7 +93,7 @@ function until_fresh_curl_object() {
     shift
     "$@"
     age=$(get_header Age); max_age=$(get_cache_max_age)
-    until test -z "$age" || test -z "$max_age" || test $test_duration -lt $((max_age - age)); do
+    until ! is_numeric "$age" || ! is_numeric "$max_age" || test $test_duration -lt $((max_age - age)); do
         sleep 1
         "$@"
         age=$(get_header Age); max_age=$(get_cache_max_age)
@@ -138,10 +138,11 @@ function expect() {
 }
 
 function expect_origin_response_time() {
+    expect_header X-Timer; to_match ",VS.*,VE"
     local timer_value=$(get_header X-Timer)
     local start=$(<<< "$timer_value" $sed 's/.*,VS([0-9]+)(,|$).*/\1/i')
     local end=$(<<< "$timer_value" $sed 's/.*,VE([0-9]+)(,|$).*/\1/i')
-    side_a=$(expr "$end" - "$start")
+    side_a=$((end - start))
     side_a_text="response time of origin server (${side_a}ms)"
 }
 
@@ -165,20 +166,42 @@ function to_be_empty() {
     fi
 }
 
+function is_numeric() {
+    local numeric='^[0-9]+$'
+    [[ "$1" =~ $numeric ]]
+}
+
+function to_be_numeric() {
+    if ! is_numeric "$side_a"; then
+        fail "Expected $side_a_text to be a numeric value but it was not"
+    fi
+}
+
 function to_be_greater_than() {
-    if test "$side_a" -le "$1"; then
+    to_be_numeric
+    if ! is_numeric "$1"; then
+        fail "Expected 1st argument \"$1\" to be a numeric value but it was not"
+    elif test "$side_a" -le "$1"; then
         fail "Expected $side_a_text to be greater than $1 but it was not"
     fi
 }
 
 function to_be_less_than() {
-    if test "$side_a" -ge "$1"; then
+    to_be_numeric
+    if ! is_numeric "$1"; then
+        fail "Expected 1st argument \"$1\" to be a numeric value but it was not"
+    elif test "$side_a" -ge "$1"; then
         fail "Expected $side_a_text to be less than $1 but it was not"
     fi
 }
 
 function to_be_between() {
-    if test "$side_a" -lt "$1" || test "$side_a" -gt "$2"; then
+    to_be_numeric
+    if ! is_numeric "$1"; then
+        fail "Expected 1st argument \"$1\" to be a numeric value but it was not"
+    elif ! is_numeric "$2"; then
+        fail "Expected 2nd argument \"$2\" to be a numeric value but it was not"
+    elif test "$side_a" -lt "$1" || test "$side_a" -gt "$2"; then
         fail "Expected $side_a_text to be within $1 and $2 but it was not"
     fi
 }
