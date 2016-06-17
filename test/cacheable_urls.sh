@@ -36,6 +36,10 @@ expect_header X-Cache; to_match MISS$
 expect_modified_response
 miss_age=$(get_header Age)
 
+it "should have enabled shielding on the previous request"
+
+expect_header X-Cache; to_match 'MISS, *MISS$'
+
 it "cache hits on the second facets request"
 
 record_facets
