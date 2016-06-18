@@ -120,8 +120,8 @@ function response() {
     echo "$full"
 }
 
-function response_body() {
-    <<< "$full" awk '/^$/{body=1;next}body'
+function get_response_body() {
+    <<< "$full" tr -d '\r' | awk '!NF{body=1;next}body'
 }
 
 function first_line() {
@@ -153,16 +153,29 @@ function expect_header() {
     addl_text="Response headers:\n$(<<< "$full" $grep -i "^(${kept_headers}):")"
 }
 
-function to_equal() {
-    local side_b=$1
-    if test "$side_a" != "$side_b"; then
-        fail "Expected $side_a_text to equal \"${side_b}\" but it did not"
-    fi
+function expect_response_body() {
+    side_a=$(get_response_body)
+    side_a_text="response body"
+    addl_text="Response headers:\n$(<<< "$full" $grep -i "^(${kept_headers}):")\n\nResponse body:\n${side_a}"
 }
 
 function to_be_empty() {
     if test -n "$side_a"; then
         fail "Expected $side_a_text to be empty but it was not"
+    fi
+}
+
+function to_not_be_empty() {
+    if test -z "$side_a"; then
+        fail "Expected $side_a_text to not be empty but it was"
+    fi
+}
+
+function to_equal() {
+    to_not_be_empty
+    local side_b=$1
+    if test "$side_a" != "$side_b"; then
+        fail "Expected $side_a_text to equal \"${side_b}\" but it did not"
     fi
 }
 

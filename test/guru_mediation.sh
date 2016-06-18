@@ -31,4 +31,4 @@ read -r -d '' expected_body <<EOF
 }
 EOF
 
-expect "$(response_body)"; to_equal "$expected_body"
+expect_response_body; to_equal "$expected_body"
