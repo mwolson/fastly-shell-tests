@@ -7,6 +7,7 @@ full=
 
 # QA settings
 origin_url="https://services-intqa.ticketmaster.net/api/ismds"
+link_prefix="http://services-fastly.ticketmaster.net"
 target_url="https://services-fastly.ticketmaster.net/api/ismds"
 target_event_id=26004E4DF73E808C
 target_apikey=b462oi7fic6pehcdkzony5bxhe
@@ -15,6 +16,7 @@ target_proxy_auth_token="YjQ2Mm9pN2ZpYzZwZWhjZGt6b255NWJ4aGU6cHF1enBmcmZ6N3pkMnl
 
 # Production settings
 # origin_url="https://services.ticketmaster.com/api/ismds"
+# link_prefix="http://services-fastly.ticketmaster.com"
 # target_url="https://services-fastly.ticketmaster.com/api/ismds"
 # target_event_id=01004F90D7D94571
 # target_apikey=b462oi7fic6pehcdkzony5bxhe
