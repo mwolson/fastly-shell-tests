@@ -124,6 +124,10 @@ function get_response_body() {
     <<< "$full" tr -d '\r' | awk '!NF{body=1;next}body'
 }
 
+function replace_in_response() {
+    full=$(<<< "$full" $sed "$1")
+}
+
 function first_line() {
     head -n 1 | tr -d '\r\n'
 }
