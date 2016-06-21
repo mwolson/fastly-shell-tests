@@ -1,0 +1,24 @@
+{
+  "name": "fastly-shell-tests",
+  "version": "1.0.0",
+  "description": "Fastly Regression Test Framework",
+  "main": "setup.sh",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mwolson/fastly-shell-tests.git"
+  },
+  "author": "Michael Olson <mwolson@member.fsf.org>",
+  "license": "MIT",
+  "keywords": [
+    "fastly",
+    "bash",
+    "shell",
+    "test",
+    "rspec"
+  ],
+  "dependencies": {
+    "barrt": "^1.1.1"
+  },
+  "devDependencies": {}
+}
