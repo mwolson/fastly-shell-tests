@@ -9,7 +9,7 @@ keep_headers ".*"
 record_curl -H "Origin: http://example.com" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: x-foo-bar" -X OPTIONS "${target_url}/api/ismds/host/${target_event_id}/facets?by=inventorytypes%20offertypes%20accessibility&q=available&apikey=${target_apikey}&apisecret=${target_apisecret}"
 
 it "is an HTTP 204 No Content response"
-expect "$(response | first_line)"; to_equal "HTTP/1.1 204 No Content"
+expect "$(get_response | first_line)"; to_equal "HTTP/1.1 204 No Content"
 
 it "is always a cache hit"
 expect_header X-Cache; to_match HIT$

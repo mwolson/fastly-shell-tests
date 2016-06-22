@@ -16,7 +16,7 @@ expect_header X-Cache; to_match MISS$
 expect_header Age; to_be_empty
 expect_header Retry-After; to_equal 5
 expect_header Content-Type; to_equal "application/hal+json;charset=UTF-8"
-expect "$(response | first_line)"; to_equal "HTTP/1.1 503 Synthetic test error"
+expect "$(get_response | first_line)"; to_equal "HTTP/1.1 503 Synthetic test error"
 
 read -r -d '' expected_body <<EOF
 {

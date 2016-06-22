@@ -13,7 +13,7 @@ for scenario in test/*; do
         (( pass_cnt++ ))
     else
         (( fail_cnt++ ))
-        fail_list="${fail_list}\n  - ${test_case}"
+        fail_list="${fail_list}\n  - ${scenario}"
     fi
 done
 
