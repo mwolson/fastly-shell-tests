@@ -53,7 +53,7 @@ function get_response() {
 }
 
 function get_http_status() {
-    <<< "$full" first_line | $sed 's!^HTTP/.+([0-9][0-9][0-9]).+$!\1!'
+    <<< "$full" first_line | sed 's!^HTTP/.+([0-9][0-9][0-9]).+$!\1!'
 }
 
 function get_header() {
@@ -89,7 +89,7 @@ function replace_in_response() {
 function expect_http_status() {
     define_side_a "$(get_http_status)"
     define_side_a_text "HTTP response code of \"${side_a}\""
-    local response_headers=$(<<< "$full" $grep -i "^(${kept_headers}):")
+    local response_headers=$(<<< "$full" grep -i "^(${kept_headers}):")
     define_addl_text "Status line:\n$(get_response | first_line)\n\nResponse headers:\n${response_headers}"
 }
 
