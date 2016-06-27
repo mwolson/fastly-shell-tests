@@ -17,7 +17,6 @@ function record_fastly() {
 function scrub_response() {
     replace_in_response 's!("created": *")[^"]*(")!\1_SCRUBBED_\2!'
     replace_in_response 's!("expires": *")[^"]*(")!\1_SCRUBBED_\2!'
-    replace_in_response 's!("href": *")/api/ismds([^"]*")!\1'"$link_prefix"'\2!g'
 }
 
 it "does not change response body on a miss"
