@@ -16,6 +16,7 @@ function record_fastly() {
 
 function scrub_response() {
     replace_in_response 's!("created": *")[^"]*(")!\1_SCRUBBED_\2!'
+    replace_in_response 's!("modified": *")[^"]*(")!\1_SCRUBBED_\2!'
     replace_in_response 's!("expires": *")[^"]*(")!\1_SCRUBBED_\2!'
 }
 
@@ -29,7 +30,7 @@ origin_response_body=$(get_response_body)
 
 record_fastly
 
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
 scrub_response
 expect_response_body; to_equal "$origin_response_body"
 
@@ -37,6 +38,6 @@ it "cache hits with same response body"
 
 record_fastly
 
-expect_header X-Cache; to_match HIT$
+expect_header X-Cache; to_match HIT
 scrub_response
 expect_response_body; to_equal "$origin_response_body"

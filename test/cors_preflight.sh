@@ -12,7 +12,7 @@ it "is an HTTP 204 No Content response"
 expect "$(get_response | first_line)"; to_equal "HTTP/1.1 204 No Content"
 
 it "is always a cache hit"
-expect_header X-Cache; to_match HIT$
+expect_header X-Cache; to_match HIT
 
 it "has all the expected headers"
 expect_header Access-Control-Max-Age; to_equal 86400

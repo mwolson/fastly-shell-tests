@@ -6,9 +6,8 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/mwolson/fastly-shell-tests.git"
+    "url": "git@git.tm.tmcs:tap/ismds.git"
   },
-  "author": "Michael Olson <mwolson@member.fsf.org>",
   "license": "MIT",
   "keywords": [
     "fastly",
@@ -18,8 +17,8 @@
     "rspec"
   ],
   "dependencies": {
-    "barrt": "^1.1.2",
-    "barrt-curl": "^1.0.1"
+    "barrt": "^1.1.5",
+    "barrt-curl": "^2.0.0"
   },
   "devDependencies": {}
 }

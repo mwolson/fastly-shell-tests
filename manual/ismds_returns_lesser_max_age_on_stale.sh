@@ -30,7 +30,7 @@ it "compared to fastly request made just before, should preserve the Age header 
 
 pop_curl
 
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
 expect_header Age; to_be_between 0 $((ismds_age + 1))
 expect_header Cache-Control; to_match max-age=5$
 
@@ -50,5 +50,5 @@ it "compared to fastly request made just before, should preserve the Age header 
 
 pop_curl
 
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
 expect_header Age; to_be_between $((ismds_age - 1)) $((ismds_age + 1))

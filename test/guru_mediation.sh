@@ -12,13 +12,14 @@ record_curl "${target_url}/test/guru?apikey=${target_apikey}&apisecret=${target_
 
 expect_header Server; to_equal Varnish
 expect_header Access-Control-Allow-Origin; to_equal "http://fastly-hackathon.tmdev.co"
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
 expect_header Age; to_be_empty
 expect_header Retry-After; to_equal 5
 expect_header Content-Type; to_equal "application/hal+json;charset=UTF-8"
 expect "$(get_response | first_line)"; to_equal "HTTP/1.1 503 Synthetic test error"
 
-read -r -d '' expected_body <<EOF
+IFS="" read -r -d '' expected_body <<EOF
+
 {
   "schema": "urn:com.ticketmaster.services:schema:common:Status:1.0",
   "meta": {
@@ -30,5 +31,7 @@ read -r -d '' expected_body <<EOF
   "_embedded": {}
 }
 EOF
+
+expected_body=$(<<< "$expected_body" remove_last_line)
 
 expect_response_body; to_equal "$expected_body"

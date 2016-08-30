@@ -18,14 +18,14 @@ it "misses on the first request with apikey/apisecret query params"
 
 until_fresh_curl_object 3 record_with_query_params
 
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
 miss_age=$(get_header Age)
 
 it "cache hits on the second request"
 
 record_with_query_params
 
-expect_header X-Cache; to_match HIT$
+expect_header X-Cache; to_match HIT
 expect_header Age; to_be_between $((miss_age)) $((miss_age + 2))
 expect_origin_response_time; to_be_less_than 25
 
@@ -35,7 +35,7 @@ record_with_wrong_api_secret
 
 expect_header Server; to_equal nginx
 expect_header Age; to_be_empty
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
 
 it "does not cache the request containing wrong api secret"
 
@@ -43,4 +43,4 @@ record_with_wrong_api_secret
 
 expect_header Server; to_equal nginx
 expect_header Age; to_be_empty
-expect_header X-Cache; to_match MISS$
+expect_header X-Cache; to_match MISS
