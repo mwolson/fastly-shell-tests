@@ -64,10 +64,6 @@ function ensure_cache_miss() {
     define_curl_token "TMPS-IdentityToken: $(get_random_token)"
 }
 
-function count_lines() {
-    wc -l | awk '{ print $1 }'
-}
-
 function describe() {
     echo "* $@"
     ensure_cache_miss
